@@ -1,0 +1,6 @@
+{
+  "optional": ["es7.classProperties"],
+  "ignore": [
+    "node_modules/*"
+  ]
+}

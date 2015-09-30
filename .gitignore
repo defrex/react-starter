@@ -1,0 +1,7 @@
+node_modules/
+public/main.js
+public/main.js.map
+public/main.css
+settings/current.js
+
+*.sublime-*
