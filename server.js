@@ -11,7 +11,6 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { RoutingContext, match } from 'react-router';
 import createLocation from 'history/lib/createLocation';
-import DocumentTitle from 'react-document-title';
 import { argv } from 'yargs';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
@@ -68,7 +67,6 @@ app.use(function(req, res, next) {
     }
 
     res.status(200).send(htmlBase
-      .replace('<!--[title]-->', DocumentTitle.rewind())
       .replace('<!--[body]-->', body)
       .replace('<!--[props]-->', `<script>window.__routeProps=${JSON.stringify(renderProps)};</script>`)
       .replace('<!--[google_analytics_account]-->', settings.GOOGLE_ANALYICS_ACCOUNT)
