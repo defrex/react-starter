@@ -1,6 +1,4 @@
 
-process.browser = false;
-
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
