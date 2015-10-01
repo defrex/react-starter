@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import Router from 'react-router';
 // import NProgress from 'nprogress';
 
-import routes from '../routes.js';
+import routes from './routes.js';
 
 
 ReactDOM.render(

@@ -17,7 +17,7 @@ import settings from './settings/current';
 
 
 const absolute = (relPath)=> path.join(__dirname, relPath);
-const htmlBase = fs.readFileSync(absolute('./client/index.html'), { encoding: 'utf-8' });
+const htmlBase = fs.readFileSync(absolute('./index.html'), { encoding: 'utf-8' });
 const app = express();
 
 

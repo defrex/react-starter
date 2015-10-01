@@ -40,7 +40,7 @@ if (argv.debug) {
 
 
 const clientConfig = _.extend({}, defaultConfig, {
-  entry: path.resolve(__dirname, 'client', 'main.js'),
+  entry: path.resolve(__dirname, 'client.js'),
 
   output: {
     path: path.join(__dirname, 'public'),
@@ -90,7 +90,7 @@ const onBuild = function(done) {
   return function(err, stats) {
     if(err)
       console.log('Error', err);
-    else
+    else if (argv.verbose)
       console.log(stats.toString());
 
     if (done) done();
