@@ -50,9 +50,7 @@ app.use(function(req, res, next) {
       return;
     }
 
-    const head = Helmet.rewind();
-    console.log('head', head);
-    const { title, meta, link } = head;
+    const { title, meta, link } = Helmet.rewind();
 
     const html = `
       <!DOCTYPE html>
