@@ -11,11 +11,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { RoutingContext, match } from 'react-router';
 import createLocation from 'history/lib/createLocation';
-import { argv } from 'yargs';
-import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
 
-import webpackConfig from './webpack.config';
 import routes from './routes.js';
 import settings from './settings/current';
 
@@ -29,13 +25,6 @@ const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-if (argv.debug) {
-  app.use(webpackDevMiddleware(webpack(webpackConfig), {
-    noInfo: true,
-  }));
-}
-
 app.use(express.static(absolute('./public')));
 
 app.use(function(req, res, next) {

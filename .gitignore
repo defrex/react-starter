@@ -1,7 +1,12 @@
-node_modules/
-public/main.js
-public/main.js.map
-public/main.css
-settings/current.js
+/node_modules/
+/public/main.js
+/public/main.js.map
+/public/main.css
+/public/main.css.map
+/bin.js
+/bin.js.map
+/main.css
+/main.css.map
+/settings/current.js
 
 *.sublime-*

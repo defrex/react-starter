@@ -1,40 +1,127 @@
 
-require('babel/register');
-
-const webpack = require('webpack');
+const fs = require('fs');
+const path = require('path');
+const _ = require('lodash');
 const gulp = require('gulp');
-const sass = require('gulp-sass');
-const prefix = require('gulp-autoprefixer');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const precss = require('precss');
 const argv = require('yargs').argv;
+const nodemon = require('nodemon');
 
 
-const webpackHandler = function(err) {
-  if (err) console.error(err);
+const defaultConfig = {
+  module: {
+    loaders: [
+      { test: /\.js$/, loader: 'babel-loader' },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract(
+          'style-loader',
+          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader'
+        ),
+      },
+      { test: /\.json$/, loader: 'json-loader' },
+    ],
+  },
+
+  postcss: [autoprefixer, precss],
+
+  plugins: [
+    new ExtractTextPlugin('main.css', { allChunks: true }),
+  ],
 };
 
-const webpackCompiler = webpack(require('./webpack.config'));
-
-gulp.task('webpack', ()=> webpackCompiler.run(webpackHandler));
-
-
-const sassArgs = { errLogToConsole: true, outputStyle: 'compressed' };
-
 if (argv.debug) {
-  sassArgs.outputStyle = 'expanded';
-  sassArgs.sourceComments = 'normal';
+  defaultConfig.devtool = 'sourcemap';
+  defaultConfig.debug = true;
 }
 
-gulp.task('css', function() {
-  return gulp
-    .src('client/sass/main.scss')
-    .pipe(sass(sassArgs).on('error', sass.logError))
-    .pipe(prefix('last 3 version'))
-    .pipe(gulp.dest('./public/'));
+
+const clientConfig = _.extend({}, defaultConfig, {
+  entry: path.resolve(__dirname, 'client', 'main.js'),
+
+  output: {
+    path: path.join(__dirname, 'public'),
+    filename: 'main.js',
+  },
+
+  resolve: {
+    modulesDirectories: ['node_modules'],
+  },
 });
 
-gulp.task('watch', function() {
-  gulp.watch(['client/sass/**/*.scss', 'client/sass/*.scss'], ['css']);
-  webpackCompiler.watch(100, webpackHandler);
+if (argv.debug) {
+  clientConfig.module.loaders.push(
+    { test: require.resolve('react'), loader: 'expose?React' }
+  );
+} else {
+  clientConfig.plugins.push(new webpack.optimize.OccurenceOrderPlugin());
+  clientConfig.plugins.push(new webpack.optimize.DedupePlugin());
+  clientConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
+}
+
+
+const nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter((x)=> ['.bin'].indexOf(x) === -1)
+  .forEach((mod)=> nodeModules[mod] = 'commonjs ' + mod);
+
+const serverConfig = _.extend({}, defaultConfig, {
+  entry: path.resolve(__dirname, 'server.js'),
+
+  output: {
+    path: __dirname, filename: 'bin.js',
+  },
+
+  target: 'node',
+
+  externals: nodeModules,
+
+  node: {
+    __dirname: true,
+    __filename: true,
+  },
 });
 
-gulp.task('default', ['webpack', 'css']);
+
+const onBuild = function(done) {
+  return function(err, stats) {
+    if(err)
+      console.log('Error', err);
+    else
+      console.log(stats.toString());
+
+    if (done) done();
+  };
+};
+
+
+gulp.task('build-client', function(done) {
+  webpack(clientConfig).run(onBuild(done));
+});
+
+gulp.task('watch-client', function() {
+  webpack(clientConfig).watch(100, onBuild());
+});
+
+gulp.task('build-server', function(done) {
+  webpack(serverConfig).run(onBuild(done));
+});
+
+gulp.task('watch-server', function() {
+  webpack(serverConfig).watch(100, onBuild());
+});
+
+gulp.task('build', ['build-client', 'build-server']);
+gulp.task('watch', ['watch-client', 'watch-server']);
+
+gulp.task('run', ['watch-client', 'watch-server'], function() {
+  nodemon({
+    execMap: { js: 'node' },
+    script: path.join(__dirname, 'bin.js'),
+    ignore: ['*'],
+    ext: 'noop',
+  }).on('restart', ()=> console.log('Restarted!'));
+});

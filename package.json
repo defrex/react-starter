@@ -4,35 +4,33 @@
   "description": "",
   "scripts": {
     "start": "./bin.js",
-    "dev": "nodemon ./bin.js --debug",
-    "build": "./node_modules/.bin/gulp"
+    "build": "./node_modules/.bin/gulp build",
+    "dev": "./node_modules/.bin/gulp run --debug"
   },
   "dependencies": {
+    "autoprefixer": "^6.0.3",
     "babel": "^5.8.23",
     "babel-loader": "^5.3.2",
     "body-parser": "^1.14.1",
     "css-loader": "^0.19.0",
     "expose-loader": "^0.7.0",
     "express": "^4.13.3",
+    "extract-text-webpack-plugin": "^0.8.2",
     "gulp": "^3.9.0",
-    "gulp-autoprefixer": "^3.0.2",
-    "gulp-sass": "^2.0.4",
     "history": "^1.11.1",
+    "json-loader": "^0.5.3",
     "lodash": "^3.10.1",
     "morgan": "^1.6.1",
-    "node-sass": "^3.3.3",
     "normalize.css": "^3.0.3",
+    "postcss-loader": "^0.6.0",
+    "precss": "^1.2.3",
     "react": "^0.14.0-rc1",
     "react-dom": "^0.14.0-rc1",
     "react-router": "^1.0.0-rc1",
-    "sass-loader": "^3.0.0",
     "serve-favicon": "^2.3.0",
     "style-loader": "^0.12.4",
     "webpack": "^1.12.2",
-    "webpack-dev-middleware": "^1.2.0",
-    "yargs": "^3.26.0"
-  },
-  "devDependencies": {
+    "yargs": "^3.26.0",
     "nodemon": "^1.7.1"
   }
 }
