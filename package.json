@@ -5,7 +5,7 @@
   "scripts": {
     "start": "./bin.js",
     "build": "./node_modules/.bin/gulp build",
-    "dev": "./node_modules/.bin/gulp run --debug"
+    "dev": "./node_modules/.bin/gulp run --dev"
   },
   "dependencies": {
     "autoprefixer": "^6.0.3",
@@ -17,6 +17,7 @@
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.8.2",
     "gulp": "^3.9.0",
+    "gulp-util": "^3.0.6",
     "history": "^1.11.1",
     "json-loader": "^0.5.3",
     "lodash": "^3.10.1",

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -33,7 +34,7 @@ const defaultConfig = {
   ],
 };
 
-if (argv.debug) {
+if (argv.dev) {
   defaultConfig.devtool = 'sourcemap';
   defaultConfig.debug = true;
 }
@@ -52,7 +53,7 @@ const clientConfig = _.extend({}, defaultConfig, {
   },
 });
 
-if (argv.debug) {
+if (argv.dev) {
   clientConfig.module.loaders.push(
     { test: require.resolve('react'), loader: 'expose?React' }
   );
@@ -117,11 +118,16 @@ gulp.task('watch-server', function() {
 gulp.task('build', ['build-client', 'build-server']);
 gulp.task('watch', ['watch-client', 'watch-server']);
 
-gulp.task('run', ['watch-client', 'watch-server'], function() {
-  nodemon({
-    execMap: { js: 'node' },
-    script: path.join(__dirname, 'bin.js'),
-    ignore: ['*'],
-    ext: 'noop',
-  }).on('restart', ()=> console.log('Restarted!'));
-});
+
+if (argv.dev) {
+  gulp.task('run', ['watch-client', 'watch-server'], function() {
+    const script = path.join(__dirname, 'bin.js');
+
+    nodemon({ script, watch: script });
+    nodemon.on('restart', ()=> gutil.log(gutil.colors.magenta('Restarting Server')));
+  });
+} else {
+  gulp.task('run', function() {
+    gutil.log(gutil.colors.red('"gulp run" is only available in dev mode.'));
+  });
+}
